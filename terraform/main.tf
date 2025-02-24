@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-west-2"  # Change to your desired AWS region
+  region = "us-west-2"  # Set your desired AWS region
 }
 
 provider "kubernetes" {
@@ -13,12 +13,10 @@ resource "aws_iam_role" "eks_cluster_role" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action = "sts:AssumeRole"
-        Principal = {
-          Service = "eks.amazonaws.com"
-        }
-        Effect = "Allow"
-        Sid    = ""
+        Action    = "sts:AssumeRole"
+        Principal = { Service = "eks.amazonaws.com" }
+        Effect    = "Allow"
+        Sid       = ""
       },
     ]
   })
@@ -38,11 +36,11 @@ module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   cluster_name    = "my-cluster"
   cluster_version = "1.21"
-  
+
   vpc_id          = aws_vpc.vpc.id
   subnet_ids      = [for subnet in aws_subnet.subnet : subnet.id]
 
-  # Use managed_node_groups instead of node_groups
+  # Managed Node Group Configuration
   managed_node_groups = {
     eks_nodes = {
       desired_capacity = 2
@@ -50,10 +48,10 @@ module "eks" {
       min_capacity     = 1
       instance_type    = "t3.medium"
       key_name         = "your-ec2-key-pair" # Replace with your EC2 key pair
-      subnet_ids       = [for subnet in aws_subnet.subnet : subnet.id] # Specify subnets for worker nodes
+      subnet_ids       = [for subnet in aws_subnet.subnet : subnet.id]
     }
   }
 
-  # Optional: enabling IAM roles for Kubernetes worker nodes
+  # Optional: Enabling AWS Auth Management
   manage_aws_auth = true
 }
