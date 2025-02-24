@@ -48,9 +48,7 @@ module "eks" {
       max_capacity     = 3
       min_capacity     = 1
       instance_type    = "t3.medium"
+      key_name         = "your-ec2-key-pair" # Add your EC2 key pair name
     }
   }
-
-  # Optional: enable IAM roles for Kubernetes worker nodes
-  manage_aws_auth = true
 }
