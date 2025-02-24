@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-west-2" # Change to your desired AWS region
+  region = "us-west-2" # Update to your desired AWS region
 }
 
 provider "kubernetes" {
@@ -50,4 +50,7 @@ module "eks" {
       instance_type    = "t3.medium"
     }
   }
+
+  # Optional: enable IAM roles for Kubernetes worker nodes
+  manage_aws_auth = true
 }
