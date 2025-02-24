@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-ethereum
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: go-ethereum
+  template:
+    metadata:
+      labels:
+        app: go-ethereum
+    spec:
+      containers:
+      - name: go-ethereum
+        image: ipangelov/go-ethereum:deployed
+        ports:
+        - containerPort: 8545
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-ethereum-service
+spec:
+  selector:
+    app: go-ethereum
+  ports:
+    - protocol: TCP
+      port: 8545
+      targetPort: 8545
+  type: LoadBalancer
