@@ -40,7 +40,7 @@ module "eks" {
   cluster_version = "1.21"
   
   vpc_id          = aws_vpc.vpc.id
-  subnets         = aws_subnet.subnet[*].id  # Use "subnets" argument instead of "vpc_subnets"
+  subnets         = [aws_subnet.subnet[0].id, aws_subnet.subnet[1].id]  # Correct way to reference subnets
 
   node_groups = {
     eks_nodes = {
@@ -49,13 +49,5 @@ module "eks" {
       min_capacity     = 1
       instance_type    = "t3.medium"
     }
-  }
-}
-
-resource "aws_eks_cluster" "example" {
-  name     = "my-cluster"
-  role_arn = aws_iam_role.eks_cluster_role.arn
-  vpc_config {
-    subnet_ids = aws_subnet.subnet[*].id
   }
 }
