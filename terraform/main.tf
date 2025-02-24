@@ -42,8 +42,8 @@ module "eks" {
   vpc_id          = aws_vpc.vpc.id
   subnet_ids      = [for subnet in aws_subnet.subnet : subnet.id]
 
-  # For node groups, use `node_groups` like below:
-  node_groups = {
+  # Use managed_node_groups instead of node_groups
+  managed_node_groups = {
     eks_nodes = {
       desired_capacity = 2
       max_capacity     = 3
@@ -55,5 +55,5 @@ module "eks" {
   }
 
   # Optional: enabling IAM roles for Kubernetes worker nodes
-  manage_aws_auth = true  # Optional if you need to manage the AWS auth
+  manage_aws_auth = true
 }
