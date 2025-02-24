@@ -40,7 +40,7 @@ module "eks" {
   cluster_version = "1.21"
   
   vpc_id          = aws_vpc.vpc.id
-  subnets         = [aws_subnet.subnet[0].id, aws_subnet.subnet[1].id]  # Correct way to reference subnets
+  subnet_ids      = [for subnet in aws_subnet.subnet : subnet.id]  # Correctly referencing subnet IDs
 
   node_groups = {
     eks_nodes = {
