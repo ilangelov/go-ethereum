@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-west-2" # Change to your desired AWS region
+  region = "us-west-2" # Update to your desired AWS region
 }
 
 provider "kubernetes" {
@@ -46,6 +46,16 @@ module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   cluster_name    = "my-cluster"
   cluster_version = "1.21"
-  subnets         = aws_subnet.subnet[*].id
+  
   vpc_id          = aws_vpc.vpc.id
+  vpc_subnets     = aws_subnet.subnet[*].id  # Correct argument for subnets
+
+  node_groups = {
+    eks_nodes = {
+      desired_capacity = 2
+      max_capacity     = 3
+      min_capacity     = 1
+      instance_type    = "t3.medium"
+    }
+  }
 }
