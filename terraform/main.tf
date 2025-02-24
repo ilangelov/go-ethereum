@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-west-2" # Update to your desired AWS region
+  region = "us-west-2"  # Change to your desired AWS region
 }
 
 provider "kubernetes" {
@@ -40,15 +40,20 @@ module "eks" {
   cluster_version = "1.21"
   
   vpc_id          = aws_vpc.vpc.id
-  subnet_ids      = [for subnet in aws_subnet.subnet : subnet.id]  # Correctly referencing subnet IDs
+  subnet_ids      = [for subnet in aws_subnet.subnet : subnet.id]
 
+  # For node groups, use `node_groups` like below:
   node_groups = {
     eks_nodes = {
       desired_capacity = 2
       max_capacity     = 3
       min_capacity     = 1
       instance_type    = "t3.medium"
-      key_name         = "your-ec2-key-pair" # Add your EC2 key pair name
+      key_name         = "your-ec2-key-pair" # Replace with your EC2 key pair
+      subnet_ids       = [for subnet in aws_subnet.subnet : subnet.id] # Specify subnets for worker nodes
     }
   }
+
+  # Optional: enabling IAM roles for Kubernetes worker nodes
+  manage_aws_auth = true  # Optional if you need to manage the AWS auth
 }
