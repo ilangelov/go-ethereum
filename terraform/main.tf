@@ -1,19 +1,11 @@
 provider "aws" {
-  region = "us-west-2" # Update to your desired AWS region
+  region = "us-west-2" # Change to your desired AWS region
 }
 
 provider "kubernetes" {
   host                   = module.eks.cluster_endpoint
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
   token                  = data.aws_eks_cluster_auth.cluster.token
-}
-
-resource "aws_eks_cluster" "example" {
-  name     = "my-cluster"
-  role_arn = aws_iam_role.eks_cluster_role.arn
-  vpc_config {
-    subnet_ids = aws_subnet.subnet[*].id
-  }
 }
 
 resource "aws_iam_role" "eks_cluster_role" {
@@ -48,7 +40,7 @@ module "eks" {
   cluster_version = "1.21"
   
   vpc_id          = aws_vpc.vpc.id
-  vpc_subnets     = aws_subnet.subnet[*].id  # Correct argument for subnets
+  subnets         = aws_subnet.subnet[*].id  # Use "subnets" argument instead of "vpc_subnets"
 
   node_groups = {
     eks_nodes = {
@@ -57,5 +49,13 @@ module "eks" {
       min_capacity     = 1
       instance_type    = "t3.medium"
     }
+  }
+}
+
+resource "aws_eks_cluster" "example" {
+  name     = "my-cluster"
+  role_arn = aws_iam_role.eks_cluster_role.arn
+  vpc_config {
+    subnet_ids = aws_subnet.subnet[*].id
   }
 }
