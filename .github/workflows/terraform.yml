@@ -14,14 +14,20 @@ jobs:
       # Step 1: Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v2
+        with:
+          ref: 'refs/heads/master'  # Ensure it's the correct branch
 
-      # Step 2: Set up Terraform
+      # Step 2: List files to verify Terraform files exist
+      - name: List files in terraform directory
+        run: ls -al terraform  # Verify files under the terraform directory
+
+      # Step 3: Set up Terraform
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: 1.4.6 # Specify Terraform version
+          terraform_version: 1.4.6  # Specify Terraform version
 
-      # Step 3: Set up AWS Credentials using GitHub secrets
+      # Step 4: Set up AWS Credentials using GitHub secrets
       - name: Set up AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -29,19 +35,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # Step 4: Terraform init
+      # Step 5: Terraform Init (with path to the terraform directory)
       - name: Terraform Init
-        run: terraform init
+        run: terraform init ./terraform
 
-      # Step 5: Terraform Validate
+      # Step 6: Terraform Validate (with path to the terraform directory)
       - name: Terraform Validate
-        run: terraform validate
+        run: terraform validate ./terraform
 
-      # Step 6: Terraform Plan
+      # Step 7: Terraform Plan (with path to the terraform directory)
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan ./terraform
 
-      # Step 7: Terraform Apply (if merged into master branch)
+      # Step 8: Terraform Apply (if merged into master branch)
       - name: Terraform Apply
         if: github.ref == 'refs/heads/master'
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve ./terraform
